@@ -22,13 +22,14 @@ def load_dataset(path: str) -> xr.Dataset:
     return xr.open_dataset(path)
 
 
-def load_regions(ds):
+def load_regions(ds, configs):
         
     """
     Define the regions for analysis.
 
     Parameters:
         ds(xr.Dataset): The original dataset.
+        configs(yaml): Configurations file.
 
     Returns:
         region_names(list[str]): The names of the regions.
@@ -38,20 +39,20 @@ def load_regions(ds):
     """
 
     # These values are pre-defined.
-    SoG_north = [650, 730, 100, 200]
-    SoG_center = [450, 550, 200, 300]
-    Fraser_plume = [380, 460, 260, 330]
-    SoG_south = [320, 380, 280, 350]
-    Haro_Boundary = [290, 350, 210, 280]
-    JdF_west = [250, 425, 25, 125]
-    JdF_east = [200, 290, 150, 260]
-    PS_all = [0, 200, 80, 320]
-    PS_main = [20, 150, 200, 280]
+    SoG_north = configs['data']['SoG_north']
+    SoG_center = configs['data']['SoG_center']
+    Fraser_plume = configs['data']['Fraser_plume']
+    SoG_south = configs['data']['SoG_south']
+    Haro_Boundary = configs['data']['Haro_Boundary']
+    JdF_west = configs['data']['JdF_west']
+    JdF_east = configs['data']['JdF_east']
+    PS_all = configs['data']['PS_all']
+    PS_main = configs['data']['PS_main']
 
-    region_names = ['GN','GC','FP','GS', 'HB', 'JdFW', 'JdFE', 'PSA', 'PSM'] # used in the legend of the plot.
+    region_names = configs['data']['region_names'] # used in the legend of the plot.
 
     regions_all = [SoG_north,SoG_center,Fraser_plume,SoG_south,Haro_Boundary,JdF_west,JdF_east,PS_all,PS_main] # including all regions in one list.
-    colors = ['g', 'b', 'm', 'k', 'm', 'c', 'w', 'm','r'] # including all colors in one list
+    colors = configs['data']['colors'] # including all colors in one list
 
     # Creating an xarray dataArray, which has pointers for each region.
     regions = np.full((len(ds.y),len(ds.x)),np.nan)
