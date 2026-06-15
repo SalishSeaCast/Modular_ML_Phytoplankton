@@ -20,7 +20,7 @@ def plot_regions(ds, name, regions_all, region_names, colors):
         region_names(list[str]): The names of the regions.
         colors(list[str]): List the colors for each region. 
 
-    Parameters:
+    Returns:
         fig(object): Figure object.
         ax(object): Axis object.
 
@@ -54,7 +54,7 @@ def plotting_mean_values(ds_features, data, period_features, units, category, re
         category(str)): The type of the targets.
         region(str): The region of interest.
 
-    Parameters:
+    Returns:
         fig(object): Figure object.
     """
 
@@ -97,13 +97,13 @@ def plotting_seasonality(season, labels):
         season(np.array[float]): The long-term seasonality.
         labels(np.array[string]): The labels of each day.
 
-    Parameters:
+    Returns:
         fig(object): Figure object.
     """
 
     fig, ax = plt.subplots()
 
-    if len(season) == 75: # For the whole domain
+    if len(season) == len(labels): # For the whole domain
         ax.plot(season)
         fig.suptitle('Long-term seasonality (2007-2020)')
 
