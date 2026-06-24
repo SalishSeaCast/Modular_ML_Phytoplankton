@@ -107,22 +107,4 @@ def making_array(variable, ds, name, units):
     dataset = xr.DataArray(variable, coords = {'time_counter': ds.time_counter,'y': ds.y, 'x': ds.x}, dims = ['time_counter','y','x'], attrs=dict(description=name, units=units))
     
     return dataset
-
-def file_creation(path, variable, var_name, file_name):
-
-    """
-    Saving the Dataset.
-
-    Parameters:
-        path(str): The path to save the file.
-        variable(xr.DataArray[float]): The variable we want to save.
-        name(str): The name of the variable.
-
-    Returns: 
-        -
-    """
-
-    # Preparation of the dataset. 
-    temp = variable.to_dataset(name = var_name)
-    temp.to_netcdf(path = path + file_name, mode='a', encoding={var_name:{"zlib": True, "complevel": 9}})
-    temp.close()    
+  
