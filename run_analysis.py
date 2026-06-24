@@ -7,12 +7,17 @@ Run analysis script that initiates the pipeline
 
 import numpy as np
 import pandas as pd
+import logging
+import argparse
 
-from src import data, processing, utils, modeling, evaluation, config
+from src import data, processing, utils, modeling, evaluation, config, output
 
-configs = config.load_config('configs/diat_pr.yaml')
+logging.basicConfig(level = logging.DEBUG, format = '%(asctime)s - %(levelname)s - %(message)s', 
+    handlers=[logging.FileHandler('outputs/logs/pipeline.log'), logging.StreamHandler()]) 
 
-def main():
+logger = logging.getLogger(__name__)
+
+def main(configs):
 
     """
     Entry point for reproducing the full ML pipeline.
@@ -21,9 +26,7 @@ def main():
         metrics(dictionary): The evaluation metrics.
     """
 
-    print('\n')
-    print('Pipeline started!')
-    print('\n')
+    logger.info('Pipeline started')
 
     # Initiation.
 
@@ -45,23 +48,22 @@ def main():
 
     # Pre-training.
 
-    # Obtaining the indeces of the input features.
-    input_feature_indeces = processing.indeces(drivers, spatial, day_input, inputs_names)
+    # Obtaining the indices of the input features.
+    input_feature_indices = processing.indices(drivers, spatial, day_input, inputs_names)
 
     # Obtaining the train dataset and its features (date, labels).
     ds_train, ds_train_features = data.sel_dataset(ds, configs['notebook']['train_starting_year'], configs['notebook']['train_ending_year'])
 
-    # Input features, target and indeces for train.
+    # Input features, target and indices for train.
     pre_train_data = processing.dataset_preparation(ds_train, name, inputs_names)
 
-    print('Pre-training done!')
-    print('\n')
+    logger.info('Pre-training done!')
 
     ## Training.
 
     # Defining the model.
-    model = modeling.Diatom_pr_regressor(n_bins = configs['notebook']['n_bins'], drivers_idx=input_feature_indeces['drivers'], 
-        spatial_idx=input_feature_indeces['spatial'], day_idx=input_feature_indeces['day'])
+    model = modeling.Diatom_pr_regressor(n_bins = configs['notebook']['n_bins'], drivers_idx=input_feature_indices['drivers'], 
+        spatial_idx=input_feature_indices['spatial'], day_idx=input_feature_indices['day'])
     
     # Train.
     model.train(pre_train_data['inputs'], pre_train_data['targets'])
@@ -70,15 +72,14 @@ def main():
     predictions = model.test(pre_train_data['inputs'])
 
     # Returning the targets and predictions in an appropriate form (time-series).
-    post_train_data = evaluation.post_processing(ds_train, pre_train_data['targets'], predictions, pre_train_data['indeces'])
+    post_train_data = evaluation.post_processing(ds_train, pre_train_data['targets'], predictions, pre_train_data['indices'])
 
-    print('Training done!')
-    print('\n')
+    logger.info('Training done!')
 
     # Post-Training.
 
     # Returning the targets and predictions in an appropriate form (time-series).
-    post_train_data = evaluation.post_processing(ds_train, pre_train_data['targets'], predictions, pre_train_data['indeces'])
+    post_train_data = evaluation.post_processing(ds_train, pre_train_data['targets'], predictions, pre_train_data['indices'])
     
     # Obtaining the correlation coefficient, root mean square error and slope of the best fitting line.
     train_metrics = evaluation.metrics(post_train_data['targets'], post_train_data['predictions'])
@@ -93,22 +94,20 @@ def main():
     season_features = utils.seasonality(post_train_data['targets'], ds_train_features['dates'], region_features, ds_train[name])
 
     # Calculating targets and predictions per region.
-    targets_train_regional = processing.datasets_preparation2(pre_train_data['targets'], season_features['season'], pre_train_data['indeces'], ds_train, name)
-    predictions_train_regional = processing.datasets_preparation2(predictions, season_features['season'], pre_train_data['indeces'], ds_train, name)
+    targets_train_regional = processing.datasets_preparation2(pre_train_data['targets'], season_features['season'], pre_train_data['indices'], ds_train, name)
+    predictions_train_regional = processing.datasets_preparation2(predictions, season_features['season'], pre_train_data['indices'], ds_train, name)
     
-    print('Post-Training done!')
-    print('\n')
+    logger.info('Post-Training done!')
 
     # Pre-Testing.
 
     # Obtaining the test dataset and its features (date, labels).
     ds_test, ds_test_features = data.sel_dataset(ds, configs['notebook']['test_starting_year'], configs['notebook']['test_ending_year'])
 
-    # Input features, target and indeces for test.
+    # Input features, target and indices for test.
     pre_test_data = processing.dataset_preparation(ds_test, name, inputs_names)
 
-    print('Pre-Testing done!')
-    print('\n')
+    logger.info('Pre-Testing done!')
 
     # Testing.
 
@@ -118,7 +117,7 @@ def main():
     # Post-Testing.
 
     # Returning the targets and predictions in an appropriate form (time-series).
-    post_test_data = evaluation.post_processing(ds_test, pre_test_data['targets'], predictions_test, pre_test_data['indeces'])
+    post_test_data = evaluation.post_processing(ds_test, pre_test_data['targets'], predictions_test, pre_test_data['indices'])
 
     # Obtaining the correlation coefficient, root mean square error and slope of the best fitting line.
     test_metrics = evaluation.metrics(post_test_data['targets'], post_test_data['predictions'])
@@ -130,8 +129,8 @@ def main():
     print('\n')
 
     # Calculating targets and predictions per region.
-    targets_test_regional = processing.datasets_preparation2(pre_test_data['targets'], season_features['season'], pre_test_data['indeces'], ds_test, name)
-    predictions_test_regional = processing.datasets_preparation2(predictions_test, season_features['season'], pre_test_data['indeces'], ds_test, name)
+    targets_test_regional = processing.datasets_preparation2(pre_test_data['targets'], season_features['season'], pre_test_data['indices'], ds_test, name)
+    predictions_test_regional = processing.datasets_preparation2(predictions_test, season_features['season'], pre_test_data['indices'], ds_test, name)
 
     # Creating final variables.
 
@@ -143,10 +142,28 @@ def main():
     temp = np.concat([predictions_train_regional, predictions_test_regional])
     predictions_all = data.making_array(temp, ds, name, units)
     
-    print('Pipeline completed successfully!')
-    print('\n')
+    logger.info('Pipeline completed successfully!')
+    
+    logger.debug('TEST!')
 
-    return (model.model, targets_all, predictions_all, train_metrics, test_metrics)
+    return {'model': model.model, 'targets': targets_all, 'predictions': predictions_all, 'train_metrics': train_metrics, 'test_metrics': test_metrics}
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description = 'Run phytoplankton ML pipeline') # Creating the parser.
+
+    parser.add_argument('--config', required = True, help = 'Path to YAML configuration file') # Adding the config argument.
+    parser.add_argument('--save', action='store_true', help = 'Save outputs') # Adding the save argument.
+    parser.add_argument('--verbose', action = 'store_true', help = 'Enable detailed logging') # Adding the verbose argument.
+
+    args = parser.parse_args() # Reading from the command line.
+    configs = config.load_config(args.config) # Loading the typed config file.
+
+    logger.info(f'Using configuration: {args.config}')
+    results = main(configs)
+
+    if args.save:
+        output.save_metrics('outputs/metrics/train_metrics.csv', results['train_metrics'])
+
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
