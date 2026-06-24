@@ -19,7 +19,7 @@ def dataset_preparation(dataset, name, input_names):
     Returns:
         inputs(np.array[float]): The input features.
         target(np.array[float]): The target feature.
-        indx(np.array[int]): The indeces of non-nan points.
+        indx(np.array[int]): The indices of non-nan points.
     """
 
     # Preparing x and y to be used as input features
@@ -50,14 +50,14 @@ def dataset_preparation(dataset, name, input_names):
 
     indx = np.where(np.isfinite(targets) & (x>10) & ((x>100) | (y<880)))[0] # Masking based on nan values of the target feature and the edges of the map
 
-    inputs = inputs[:,indx] # Applying the indeces
-    targets = targets[indx] # Applying the indeces
+    inputs = inputs[:,indx] # Applying the indices
+    targets = targets[indx] # Applying the indices
 
     inputs = inputs.transpose() # Final transformation needed (n_samples, n_features)
 
-    return {'inputs':inputs, 'targets':targets, 'indeces':indx}
+    return {'inputs':inputs, 'targets':targets, 'indices':indx}
 
-def indeces(drivers, spatial, day_input, inputs_names):
+def indices(drivers, spatial, day_input, inputs_names):
 
     """
     Finding the proper indices for each category of input features. Used in the regressor.
@@ -69,8 +69,8 @@ def indeces(drivers, spatial, day_input, inputs_names):
         inputs_names(list[str]): All the names of input features combined.
 
     Returns:
-        drivers_idx(np.array[int]): Indeces of drivers.
-        spatial_idx(np.array[int]): Indeces of spatial features.
+        drivers_idx(np.array[int]): indices of drivers.
+        spatial_idx(np.array[int]): indices of spatial features.
         day_idx(np.array[int]): Index of day of the year.
     """
 
@@ -107,7 +107,7 @@ def regr_inputs_targets(inputs, targets):
 
     return r_regr
 
-def datasets_preparation2(variable, season, indeces, ds, name):
+def datasets_preparation2(variable, season, indices, ds, name):
 
     """
     Preparing existing data for making xarray arrays (bringing them into the original format). Vice-versa from function datasets_preparation.
@@ -115,7 +115,7 @@ def datasets_preparation2(variable, season, indeces, ds, name):
     Parameters:
         variable(np.array[float]): The variable we want to process (flat shape).
         season(np.array[float]): The long-term seasonality (only used for its length).
-        indeces(np.array[int]): The indeces where we have values (only used for its length).
+        indices(np.array[int]): The indices where we have values (only used for its length).
         ds(xr.DataSet): The original dataset.
         name(str): The name of the variable (only used for creating the default dimensions).
 
@@ -124,7 +124,7 @@ def datasets_preparation2(variable, season, indeces, ds, name):
     """
 
     # Re-shaping it to a proper format (years * days per year * ...).
-    variable_mean = np.reshape(variable, (len(np.unique(ds.time_counter.dt.year)) * len(season), len(indeces) // len(ds.time_counter)))
+    variable_mean = np.reshape(variable, (len(np.unique(ds.time_counter.dt.year)) * len(season), len(indices) // len(ds.time_counter)))
 
     # Using this just to get the indx of valid values for one year.
     temp = np.reshape(np.ravel(ds[name]), (len(ds.time_counter), len(ds.y) * len(ds.x)))
