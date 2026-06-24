@@ -3,7 +3,5 @@ dill==0.3.9
 matplotlib==3.11.0
 numpy==2.4.6
 pandas==3.0.3
-SalishSeaTools.egg==info
 scikit_learn==1.9.0
 xarray==2026.2.0
-xarray==2025.6.1
