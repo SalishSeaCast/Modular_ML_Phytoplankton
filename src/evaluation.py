@@ -15,7 +15,7 @@ def post_processing(dataset, targets, predictions, indx):
         dataset(xr.Dataset): The selected dataset.
         targets(np.array[float]): The target feature.
         predictions(np.array[float]): The predictions.
-        indx(np.array[int]): The indeces of the target feature.
+        indx(np.array[int]): The indices of the target feature.
 
     Returns:
         inputs(np.array[float]): The input features.
