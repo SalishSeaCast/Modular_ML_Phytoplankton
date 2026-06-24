@@ -6,4 +6,4 @@ pandas==3.0.3
 scikit_learn==1.9.0
 xarray==2026.2.0
 pytest>=8.0
-yaml==1.2
+pyYAML==6.0.2
