@@ -1,3 +1,5 @@
 src/__pycache__
 tests/__pycache__
 .vscode/
+outputs/files/
+outputs/model/
