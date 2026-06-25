@@ -1,6 +1,10 @@
 
 # Modular ML Phytoplankton
 
+[Build Badge]
+[Python Badge]
+[License Badge]
+
 A modular and reproducible analysis pipeline for prediction diatom production rate in the Salish Sea, using Python, xarray, and scientific machine learning workflows.
 
 ## Overview
