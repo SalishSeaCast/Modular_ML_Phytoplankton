@@ -17,11 +17,11 @@ notebook:
   test_starting_year: '2021'
   test_ending_year: '2025'
 
-  path: '/data/ibougoudis/MOAD/files/results/modular/'
+  path: '/data/ibougoudis/MOAD/Modular_ML_Phytoplankton/'
   targets_name: 'targets'
   predictions_name: 'predictions'
-  file_name: 'targets_predictions'
-  regressor: 'regressor.xz'
+  output_name: 'targets_predictions.nc'
+  regressor: 'model_diat_pr.xz'
 
 data:
 
