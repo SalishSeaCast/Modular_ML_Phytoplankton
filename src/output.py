@@ -41,12 +41,16 @@ def file_creation(path, variable, var_name, file_name):
         -
     """
 
+    os.makedirs(path, exist_ok=True)
+
+    file_path = (path + file_name)
+
     # Preparation of the dataset. 
     temp = variable.to_dataset(name = var_name)
-    temp.to_netcdf(path = path + file_name, mode='a', encoding={var_name:{"zlib": True, "complevel": 9}})
+    temp.to_netcdf(path = file_path, mode='a', encoding={var_name:{"zlib": True, "complevel": 9}})
     temp.close()  
 
-def save_model(path, configs, model):
+def save_model(path, name, model):
 
     """
     Saving the regressor.
@@ -60,5 +64,51 @@ def save_model(path, configs, model):
         -
     """
 
-    with lzma.open(path + configs['notebook']['regressor'], 'wb') as f:   
-        dill.dump(model.model, f)
+    os.makedirs(path, exist_ok=True)
+
+    file_path = (path + name)
+
+    with lzma.open(file_path, 'wb') as f:   
+        dill.dump(model, f)
+    
+def load_model(path, name):
+
+    """
+    Loading the regressor.
+
+    Parameters:
+        path(str): The path to load the file.
+        configs(yaml): Configurations file.
+
+    Returns: 
+        model(obj): The regressor object.
+    """
+
+    file_path = (path + name)
+
+    with lzma.open(file_path, 'rb') as f:
+        model = dill.load(f)
+
+    return model
+
+def save_figure(fig, path, name, dpi=300):
+
+    """
+    Saving a figure.
+
+    Parameters:
+        fig(obj): The figure object.
+        path(str): The path to load the file.
+        name(str): The name of the figure.
+        dpi(int): The quality of the figure.
+
+
+    Returns: 
+        -
+    """
+
+    os.makedirs(path, exist_ok=True)
+
+    file_path = (path + name)
+
+    fig.savefig(file_path, dpi=dpi, bbox_inches = 'tight')
