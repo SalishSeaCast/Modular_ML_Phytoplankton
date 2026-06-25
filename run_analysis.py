@@ -9,10 +9,13 @@ import numpy as np
 import pandas as pd
 import logging
 import argparse
+import os
 
-from src import data, processing, utils, modeling, evaluation, config, output
+from src import data, processing, utils, modeling, evaluation, config, output, visualization
 
-logging.basicConfig(level = logging.DEBUG, format = '%(asctime)s - %(levelname)s - %(message)s', 
+os.makedirs('outputs/logs/', exist_ok=True)
+
+logging.basicConfig(level = logging.INFO, format = '%(asctime)s - %(levelname)s - %(message)s', 
     handlers=[logging.FileHandler('outputs/logs/pipeline.log'), logging.StreamHandler()]) 
 
 logger = logging.getLogger(__name__)
@@ -93,6 +96,9 @@ def main(configs):
     # Calculating the long-term seasonality and broadcasting it to all train years.
     season_features = utils.seasonality(post_train_data['targets'], ds_train_features['dates'], region_features, ds_train[name])
 
+    fig = visualization.plotting_seasonality(season_features['season'], ds_train_features['labels'])
+    output.save_figure(fig, configs['notebook']['path'] + 'outputs/figures/', 'Long-term seasonality (2007-2020)')
+
     # Calculating targets and predictions per region.
     targets_train_regional = processing.datasets_preparation2(pre_train_data['targets'], season_features['season'], pre_train_data['indices'], ds_train, name)
     predictions_train_regional = processing.datasets_preparation2(predictions, season_features['season'], pre_train_data['indices'], ds_train, name)
@@ -143,17 +149,16 @@ def main(configs):
     predictions_all = data.making_array(temp, ds, name, units)
     
     logger.info('Pipeline completed successfully!')
-    
-    logger.debug('TEST!')
 
-    return {'model': model.model, 'targets': targets_all, 'predictions': predictions_all, 'train_metrics': train_metrics, 'test_metrics': test_metrics}
+    return {'model': model, 'targets': targets_all, 'predictions': predictions_all, 'train_metrics': train_metrics, 'test_metrics': test_metrics}
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description = 'Run phytoplankton ML pipeline') # Creating the parser.
 
     parser.add_argument('--config', required = True, help = 'Path to YAML configuration file') # Adding the config argument.
-    parser.add_argument('--save', action='store_true', help = 'Save outputs') # Adding the save argument.
+    parser.add_argument('--save_metrics', action='store_true', help = 'Save metrics') # Adding the save metrics argument.
+    parser.add_argument('--save_model', action='store_true', help = 'Save the model') # Adding the save model argument.
     parser.add_argument('--verbose', action = 'store_true', help = 'Enable detailed logging') # Adding the verbose argument.
 
     args = parser.parse_args() # Reading from the command line.
@@ -162,8 +167,11 @@ if __name__ == '__main__':
     logger.info(f'Using configuration: {args.config}')
     results = main(configs)
 
-    if args.save:
+    if args.save_metrics:
         output.save_metrics('outputs/metrics/train_metrics.csv', results['train_metrics'])
+
+    if args.save_model:
+        output.save_model('outputs/model/', configs['notebook']['regressor'], results['model'])
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
