@@ -1,9 +1,9 @@
 
 # Modular ML Phytoplankton
 
-[Build Badge]
-[Python Badge]
-[License Badge]
+[![Tests](https://github.com/SalishSeaCast/Modular_ML_Phytoplankton/actions/workflows/tests.yml/badge.svg)](https://github.com/SalishSeaCast/Modular_ML_Phytoplankton/actions/workflows/tests.yml)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 A modular and reproducible analysis pipeline for prediction diatom production rate in the Salish Sea, using Python, xarray, and scientific machine learning workflows.
 
