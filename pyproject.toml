@@ -1,0 +1,44 @@
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modular-ml-phytoplankton"
+version = "0.1.0"
+description = "A modular machine learning framework for phytoplankton prediction."
+readme = "README.md"
+requires-python = ">=3.11"
+
+authors = [
+    {name = "Ilias Bougoudis"}
+]
+
+license = {text = "MIT"}
+
+keywords = [
+    "machine-learning",
+    "oceanography",
+    "phytoplankton",
+    "salishsea",
+    "xarray"
+]
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "xarray",
+    "matplotlib",
+    "scikit-learn",
+    "PyYAML",
+    "dill",
+    "cmocean"
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
