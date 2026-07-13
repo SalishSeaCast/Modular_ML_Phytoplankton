@@ -171,7 +171,15 @@ if __name__ == '__main__':
         output.save_metrics('outputs/metrics/train_metrics.csv', results['train_metrics'])
 
     if args.save_model:
+
+        # Research.
         output.save_model('outputs/model/', configs['notebook']['regressor'], results['model'])
+
+        # Deployment.
+        output.save_api_model('outputs/model/', configs['notebook']['regressor_dep'], results['model'])
+    
+        # Configuration file.
+        output.save_config(args.config, 'outputs/model/')
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
