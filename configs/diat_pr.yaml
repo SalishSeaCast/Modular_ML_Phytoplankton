@@ -22,6 +22,7 @@ notebook:
   predictions_name: 'predictions'
   output_name: 'targets_predictions.nc'
   regressor: 'model_diat_pr.xz'
+  regressor_dep: 'model_diat_pr.joblib'
 
 data:
 
