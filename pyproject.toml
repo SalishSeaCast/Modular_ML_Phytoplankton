@@ -25,11 +25,11 @@ keywords = [
 ]
 
 dependencies = [
-    "numpy==2.4.6",
-    "pandas==3.0.3",
+    "numpy==2.0.2",
+    "pandas==2.2.2",
     "xarray==2026.2.0",
     "matplotlib",
-    "scikit_learn==1.9.0",
+    "scikit-learn==1.7.0",
     "PyYAML",
     "dill",
     "cmocean",
