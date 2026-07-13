@@ -34,7 +34,8 @@ dependencies = [
     "dill",
     "cmocean",
     "fastapi",
-    "uvicorn"
+    "uvicorn",
+    "httpx"
 ]
 
 [tool.setuptools.packages.find]
