@@ -115,11 +115,12 @@ Examples include:
 
 This allows experiments to be modified without changing the source code.
 
+The trained model artifact is excluded from the repository due to size.
+To reproduce:
+python run_analysis.py --config config.yaml --save_model
+
 ## Future Work
 
-* Add automated testing
-* Introduce structured logging
-* Support command-line execution
 * Add Docker support
 * Implement continuous integration
 * Deploy analysis pipelines to cloud environments
