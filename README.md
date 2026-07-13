@@ -1,129 +1,284 @@
-
-# Modular ML Phytoplankton
+# Modular Machine Learning Framework for Phytoplankton Prediction
 
 [![Tests](https://github.com/SalishSeaCast/Modular_ML_Phytoplankton/actions/workflows/tests.yml/badge.svg)](https://github.com/SalishSeaCast/Modular_ML_Phytoplankton/actions/workflows/tests.yml)
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A modular and reproducible analysis pipeline for prediction diatom production rate in the Salish Sea, using Python, xarray, and scientific machine learning workflows.
+A modular machine learning framework for predicting **diatom production rate** in the Salish Sea. The project demonstrates the transition from a research-oriented notebook workflow to a production-oriented machine learning application through modular software design, reproducible training, model serving with **FastAPI**, automated testing, and continuous integration.
 
-## Overview
+---
 
-This project was developed as part of an effort to transform a research-oriented notebook workflow into a modular, maintainable, and reusable analysis pipeline.
+# Overview
 
-The repository demonstrates:
+This repository was developed to transform an exploratory scientific notebook into a reusable and maintainable machine learning framework.
 
-* Separation of logic and execution
-* Configuration-driven workflows using YAML
-* Modular data processing and visualization
-* Reproducible scientific analyses
-* Preparation for future ML, automation, and deployment workflows
+The project demonstrates:
 
-## Motivation
+- Modular data processing and feature engineering
+- Configuration-driven workflows using YAML
+- Reproducible model training
+- Model persistence for deployment
+- REST API serving using FastAPI
+- Automatic API documentation (Swagger & ReDoc)
+- Automated testing with Pytest
+- Continuous Integration with GitHub Actions
 
-The goal of this repository is to bridge the gap between academic scientific coding practices and production-oriented data science workflows.
+Although the application focuses on phytoplankton prediction, the software architecture is intentionally generic and can be adapted to similar scientific machine learning workflows.
 
-The project serves as a foundation for future extensions including:
+---
 
-* Functional data analysis
-* Machine learning models
-* Automated pipelines
-* Logging and monitoring
-* Cloud deployment
-* LLM-assisted analysis workflows
+# Motivation
 
-## Project Structure
+Scientific machine learning projects often begin as exploratory notebooks that become increasingly difficult to maintain, reuse, and deploy.
+
+The objective of this project is to bridge the gap between:
+
+- exploratory scientific programming
+- reproducible machine learning
+- production-oriented software engineering
+
+by applying modern Python development practices while preserving the flexibility required for scientific research.
+
+---
+
+# Features
+
+- Modular project architecture
+- YAML-based experiment configuration
+- Command Line Interface (CLI)
+- Reproducible machine learning pipeline
+- Saved deployment-ready model artifacts
+- FastAPI inference service
+- Dynamic request schema generation
+- Automatic OpenAPI documentation
+- Logging and error handling
+- Unit and integration tests
+- GitHub Actions Continuous Integration
+
+---
+
+# Project Structure
 
 ```text
 Modular_ML_Phytoplankton/
 
+├── .github/
+│   └── workflows/
+│       └── tests.yml
+│
 ├── configs/
 │   └── diat_pr.yaml
-
+│
 ├── notebooks/
 │   ├── diat_pr_hist_old.ipynb
 │   └── diat_pr_hist_modular.ipynb
-
+│
+├── outputs/
+│   ├── logs/
+│   └── model/
+│       ├── model_diat_pr.joblib
+│       └── diat_pr.yaml
+│
 ├── src/
+│   ├── analysis.py
 │   ├── config.py
 │   ├── data.py
+│   ├── modeling.py
+│   ├── outputs.py
 │   ├── processing.py
-│   ├── analysis.py
-│   ├── models.py
-│   └── visualization.py
-
+│   ├── visualization.py
+│   │
+│   └── api/
+│       ├── main.py
+│       ├── predictor.py
+│       ├── model_loader.py
+│       ├── model_info.py
+│       └── schemas.py
+│
+├── tests/
+│   ├── test_api.py
+│   ├── test_model.py
+│   └── test_config.py
+│
 ├── run_analysis.py
-
-└── requirements.txt
+├── pyproject.toml
+└── README.md
 ```
 
-## Architecture Diagram
+---
+
+# Project Architecture
 
 ```text
-diat_pr.yaml             
-    │
-    ▼
-run_analysis.py
-    │
-    ├── data.py
-    ├── processing.py
-    ├── modeling.py
-    ├── evaluation.py
-    ├── utils.py
-    └── config.py
-    │
-    ▼
-Results
-
-
-diat_pr.yaml             
-    │
-    ▼
-Notebook
-    │
-    ├── data.py
-    ├── processing.py
-    ├── modeling.py
-    ├── evaluation.py
-    ├── utils.py
-    |── visualization.py
-    └── config.py
-    │
-    ▼
-Exploration & Visualization
+                  YAML Configuration
+                         │
+                         ▼
+                 run_analysis.py
+                         │
+        ┌────────────────┼────────────────┐
+        │                │                │
+        ▼                ▼                ▼
+   Data Loading     Processing      Feature Engineering
+                         │
+                         ▼
+                  Model Training
+                         │
+                         ▼
+            Saved Pipeline (.joblib)
+                         │
+         ┌───────────────┴────────────────┐
+         ▼                                ▼
+   Evaluation                    FastAPI Service
+                                          │
+                                          ▼
+                                 REST Predictions
 ```
 
-## Workflow
+---
 
-1. Load dataset
-2. Select predefined spatial regions
-3. Train the model
-4. Perform analysis
-5. Generate visualizations
-6. Store and inspect results
+# Installation
 
-## Configuration
+Clone the repository
 
-Analysis settings are defined through YAML configuration files located in the `configs/` directory.
+```bash
+git clone https://github.com/SalishSeaCast/Modular_ML_Phytoplankton.git
 
-Examples include:
+cd Modular_ML_Phytoplankton
+```
 
-* Dataset path
-* Variable selection
-* Region definitions
-* Analysis parameters
+Install the project
+
+```bash
+pip install -e .
+```
+
+---
+
+# Running the Analysis
+
+Train a model using a configuration file
+
+```bash
+python run_analysis.py \
+    --config configs/diat_pr.yaml
+```
+
+To save the deployment model
+
+```bash
+python run_analysis.py \
+    --config configs/diat_pr.yaml \
+    --save_model
+```
+
+The deployment pipeline stores
+
+- trained scikit-learn pipeline (`.joblib`)
+- corresponding configuration file
+
+inside
+
+```text
+outputs/model/
+```
+
+---
+
+# Serving the Model
+
+Start the FastAPI application
+
+```bash
+uvicorn src.api.main:app --reload
+```
+
+Interactive documentation is automatically available at
+
+Swagger UI
+
+```
+http://127.0.0.1:8000/docs
+```
+
+ReDoc
+
+```
+http://127.0.0.1:8000/redoc
+```
+
+The API currently exposes endpoints for
+
+- health check
+- model information
+- prediction
+
+---
+
+# Testing
+
+Run all tests
+
+```bash
+pytest
+```
+
+The test suite includes
+
+- model persistence tests
+- configuration tests
+- API endpoint tests
+- prediction endpoint validation
+
+---
+
+# Continuous Integration
+
+GitHub Actions automatically executes the test suite on every push.
+
+The workflow verifies
+
+- package installation
+- model loading
+- API functionality
+- automated tests
+
+ensuring that the repository remains reproducible and functional.
+
+---
+
+# Configuration
+
+Experiments are fully controlled through YAML configuration files located in
+
+```text
+configs/
+```
+
+Typical configuration options include
+
+- dataset location
+- selected environmental drivers
+- spatial variables
+- temporal variables
+- machine learning model
+- training parameters
+- output options
 
 This allows experiments to be modified without changing the source code.
 
-The trained model artifact is excluded from the repository due to size.
-To reproduce:
-python run_analysis.py --config config.yaml --save_model
+---
 
-## Future Work
+# Future Work
 
-* Add Docker support
-* Implement continuous integration
-* Deploy analysis pipelines to cloud environments
+- Docker containerization
+- Cloud deployment
+- Batch prediction endpoint
+- Model versioning
+- Performance monitoring
+- MLOps integration
 
-```
-```
+---
+
+# License
+
+This project is released under the MIT License.
