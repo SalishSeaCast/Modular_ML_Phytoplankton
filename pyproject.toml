@@ -32,7 +32,9 @@ dependencies = [
     "scikit-learn",
     "PyYAML",
     "dill",
-    "cmocean"
+    "cmocean",
+    "fastapi",
+    "uvicorn"
 ]
 
 [tool.setuptools.packages.find]
