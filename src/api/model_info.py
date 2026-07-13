@@ -6,7 +6,11 @@ Model metadata helper functions.
 import yaml
 from pathlib import Path
 
-CONFIG_PATH = (Path(__file__).parents[2] / 'outputs' / 'model' / 'diat_pr.yaml')
+MODEL_CONFIG = (Path(__file__).parents[2] / 'outputs' / 'model' / 'diat_pr.yaml')
+
+DEFAULT_CONFIG = (Path(__file__).parents[2] / 'configs' / 'diat_pr.yaml')
+
+CONFIG_PATH = (MODEL_CONFIG if MODEL_CONFIG.exists() else DEFAULT_CONFIG)
 
 def load_model_info():
 
