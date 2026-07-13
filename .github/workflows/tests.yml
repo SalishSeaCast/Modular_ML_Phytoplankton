@@ -19,4 +19,11 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Show installed packages
+        run: |
+          pip show fastapi
+          pip show starlette
+          pip show httpx
+          pip show httpx2
+
       - run: pytest
