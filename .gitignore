@@ -2,6 +2,6 @@ src/__pycache__
 tests/__pycache__
 .vscode/
 outputs/files/
-outputs/model/
+outputs/model/model_diat_pr.xz
 src/api/__pycache__
-outputs/
+outputs/logs/

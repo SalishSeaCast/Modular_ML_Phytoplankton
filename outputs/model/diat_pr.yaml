@@ -1,0 +1,42 @@
+
+notebook:
+
+  name: 'Diatom_Production_Rate'
+  units: '[mmol N / $m^2$ / $s$]'
+  category: 'Production rates'
+  filename: '/data/ibougoudis/MOAD/files/inputs/jan_mar.nc'
+  drivers: ['Summation_of_solar_radiation', 'Mean_precipitation', 'Mean_air_temperature', 'Mean_wind_speed']
+  spatial: ['Latitude', 'Longitude']
+  day_input: ['Day_of_year']
+
+  train_starting_year: '2007'
+  train_ending_year: '2020'
+
+  n_bins: 255
+
+  test_starting_year: '2021'
+  test_ending_year: '2025'
+
+  path: '/data/ibougoudis/MOAD/Modular_ML_Phytoplankton/'
+  targets_name: 'targets'
+  predictions_name: 'predictions'
+  output_name: 'targets_predictions.nc'
+  regressor: 'model_diat_pr.xz'
+  regressor_dep: 'model_diat_pr.joblib'
+
+data:
+
+  SoG_north: [650, 730, 100, 200]
+  SoG_center: [450, 550, 200, 300]
+  Fraser_plume: [380, 460, 260, 330]
+  SoG_south: [320, 380, 280, 350]
+  Haro_Boundary: [290, 350, 210, 280]
+  JdF_west: [250, 425, 25, 125]
+  JdF_east: [200, 290, 150, 260]
+  PS_all: [0, 200, 80, 320]
+  PS_main: [20, 150, 200, 280]
+
+  region_names: ['GN','GC','FP','GS', 'HB', 'JdFW', 'JdFE', 'PSA', 'PSM']
+
+  colors: ['g', 'b', 'm', 'k', 'm', 'c', 'w', 'm','r']
+
