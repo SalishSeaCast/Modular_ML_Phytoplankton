@@ -35,7 +35,8 @@ dependencies = [
     "cmocean",
     "fastapi",
     "uvicorn",
-    "httpx"
+    "httpx",
+    "pytest"
 ]
 
 [tool.setuptools.packages.find]
