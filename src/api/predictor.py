@@ -6,7 +6,14 @@ Prediction helper functions - converting the JSON to numpy and calling sklearn.
 from .model_info import load_model_info
 from .model_loader import model
 
-info = load_model_info()
+if model is None:
+
+    raise RuntimeError(
+        "No trained model available."
+    )
+
+else:
+    info = load_model_info()
 
 def predict(features):
 
