@@ -4,3 +4,4 @@ tests/__pycache__
 outputs/files/
 outputs/model/
 src/api/__pycache__
+outputs/
