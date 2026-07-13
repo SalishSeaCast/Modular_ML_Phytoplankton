@@ -3,3 +3,4 @@ tests/__pycache__
 .vscode/
 outputs/files/
 outputs/model/
+src/api/__pycache__
