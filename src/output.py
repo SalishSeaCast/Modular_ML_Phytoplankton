@@ -4,9 +4,10 @@ Data saving for phytoplankton analysis.
 """
 
 import os
-import dill
 import lzma
 import pandas as pd
+import joblib
+import shutil
 
 def save_metrics(path, metrics):
 
@@ -53,12 +54,12 @@ def file_creation(path, variable, var_name, file_name):
 def save_model(path, name, model):
 
     """
-    Saving the regressor.
+    Saving the regressor (reasearch).
 
     Parameters:
         path(str): The path to save the file.
-        configs(yaml): Configurations file.
-        model(obj): The regressor object.
+        name(str): The name of the regressor (from the configuration file).
+        model(obj): The regressor object (full).
 
     Returns: 
         -
@@ -69,25 +70,25 @@ def save_model(path, name, model):
     file_path = (path + name)
 
     with lzma.open(file_path, 'wb') as f:   
-        dill.dump(model, f)
+        joblib.dump(model, f)
     
 def load_model(path, name):
 
     """
-    Loading the regressor.
+    Loading the regressor (research).
 
     Parameters:
         path(str): The path to load the file.
-        configs(yaml): Configurations file.
+        name(str): The name of the regressor (from the configuration file).
 
     Returns: 
-        model(obj): The regressor object.
+        model(obj): The regressor object (full).
     """
 
     file_path = (path + name)
 
     with lzma.open(file_path, 'rb') as f:
-        model = dill.load(f)
+        model = joblib.load(f)
 
     return model
 
@@ -112,3 +113,63 @@ def save_figure(fig, path, name, dpi=300):
     file_path = (path + name)
 
     fig.savefig(file_path, dpi=dpi, bbox_inches = 'tight')
+
+def save_api_model(path, name, model):
+
+    """
+    Saving the regressor (deployment).
+
+    Parameters:
+        path(str): The path to save the file.
+        name(str): The name of the regressor (from the configuration file).
+        model(obj): The regressor object (only the pipeline).
+
+    Returns: 
+        -
+    """
+
+    os.makedirs(path, exist_ok=True)
+
+    file_path = os.path.join(path, name)
+
+    # save ONLY sklearn pipeline
+    joblib.dump(model.model, file_path)
+
+
+def load_api_model(path, name):
+
+    """
+    Loading the regressor (deployment).
+
+    Parameters:
+        path(str): The path to load the file.
+        name(str): The name of the regressor (from the configuration file).
+
+    Returns: 
+        model(obj): The regressor object (only the pipeline).
+    """
+
+    file_path = os.path.join(path, name)
+
+    return joblib.load(file_path)
+
+def save_config(source_path, destination_path):
+
+    """
+    Saving the config file.
+
+    Parameters:
+        source_path(str): The original path of the configuration file.
+        destination_path(str): The new path for the configuration file.
+
+    Returns: 
+        -
+    """
+
+    os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+
+    shutil.copy2(source_path, destination_path)
+
+
+
+
