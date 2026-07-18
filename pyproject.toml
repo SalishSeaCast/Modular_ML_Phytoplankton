@@ -29,7 +29,7 @@ dependencies = [
     "pandas==2.2.2",
     "xarray==2026.2.0",
     "matplotlib",
-    "scikit-learn==1.7.0",
+    "scikit-learn==1.8.0",
     "PyYAML",
     "dill",
     "cmocean",
