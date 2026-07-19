@@ -1,59 +1,51 @@
 # Modular Machine Learning Framework for Phytoplankton Prediction
 
 [![Tests](https://github.com/SalishSeaCast/Modular_ML_Phytoplankton/actions/workflows/tests.yml/badge.svg)](https://github.com/SalishSeaCast/Modular_ML_Phytoplankton/actions/workflows/tests.yml)
-![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A modular machine learning framework for predicting **diatom production rate** in the Salish Sea. The project demonstrates the transition from a research-oriented notebook workflow to a production-oriented machine learning application through modular software design, reproducible training, model serving with **FastAPI**, automated testing, and continuous integration.
+A modular machine learning framework for predicting **diatom production rate** in the Salish Sea. This project demonstrates the transition from an exploratory scientific notebook to a production-oriented machine learning application through modular software design, reproducible training, REST API development, automated testing, containerization, and cloud deployment.
+
+---
+
+# Live Demo
+
+The application is publicly deployed using **Docker** and **Render**.
+
+| Resource | URL |
+|----------|-----|
+| API | https://modular-ml-phytoplankton.onrender.com |
+| Swagger UI | https://modular-ml-phytoplankton.onrender.com/docs |
+| ReDoc | https://modular-ml-phytoplankton.onrender.com/redoc |
 
 ---
 
 # Overview
 
-This repository was developed to transform an exploratory scientific notebook into a reusable and maintainable machine learning framework.
-
-The project demonstrates:
+The framework provides an end-to-end workflow for scientific machine learning, including:
 
 - Modular data processing and feature engineering
-- Configuration-driven workflows using YAML
+- Configuration-driven experiments (YAML)
 - Reproducible model training
-- Model persistence for deployment
-- REST API serving using FastAPI
-- Automatic API documentation (Swagger & ReDoc)
+- Model persistence
+- FastAPI inference service
+- Docker containerization
 - Automated testing with Pytest
 - Continuous Integration with GitHub Actions
+- Continuous Deployment with Render
 
-Although the application focuses on phytoplankton prediction, the software architecture is intentionally generic and can be adapted to similar scientific machine learning workflows.
-
----
-
-# Motivation
-
-Scientific machine learning projects often begin as exploratory notebooks that become increasingly difficult to maintain, reuse, and deploy.
-
-The objective of this project is to bridge the gap between:
-
-- exploratory scientific programming
-- reproducible machine learning
-- production-oriented software engineering
-
-by applying modern Python development practices while preserving the flexibility required for scientific research.
+Although developed for phytoplankton prediction, the software architecture is generic and can be adapted to other environmental and scientific ML applications.
 
 ---
 
-# Features
+# Technology Stack
 
-- Modular project architecture
-- YAML-based experiment configuration
-- Command Line Interface (CLI)
-- Reproducible machine learning pipeline
-- Saved deployment-ready model artifacts
-- FastAPI inference service
-- Dynamic request schema generation
-- Automatic OpenAPI documentation
-- Logging and error handling
-- Unit and integration tests
-- GitHub Actions Continuous Integration
+| Category | Technologies |
+|----------|--------------|
+| Machine Learning | scikit-learn, pandas, xarray |
+| Backend | FastAPI, Uvicorn |
+| Software Engineering | Docker, GitHub Actions, Pytest, YAML |
+| Cloud | Render |
 
 ---
 
@@ -62,76 +54,50 @@ by applying modern Python development practices while preserving the flexibility
 ```text
 Modular_ML_Phytoplankton/
 
-├── .github/
-│   └── workflows/
-│       └── tests.yml
-│
 ├── configs/
-│   └── diat_pr.yaml
-│
 ├── notebooks/
-│   ├── diat_pr_hist_old.ipynb
-│   └── diat_pr_hist_modular.ipynb
-│
 ├── outputs/
 │   ├── logs/
 │   └── model/
-│       ├── model_diat_pr.joblib
-│       └── diat_pr.yaml
-│
 ├── src/
+│   ├── api/
 │   ├── analysis.py
 │   ├── config.py
 │   ├── data.py
 │   ├── modeling.py
-│   ├── outputs.py
 │   ├── processing.py
-│   ├── visualization.py
-│   │
-│   └── api/
-│       ├── main.py
-│       ├── predictor.py
-│       ├── model_loader.py
-│       ├── model_info.py
-│       └── schemas.py
-│
+│   └── visualization.py
 ├── tests/
-│   ├── test_api.py
-│   ├── test_model.py
-│   └── test_config.py
-│
 ├── run_analysis.py
+├── Dockerfile
 ├── pyproject.toml
 └── README.md
 ```
 
 ---
 
-# Project Architecture
+# Architecture
 
 ```text
-                  YAML Configuration
-                         │
-                         ▼
-                 run_analysis.py
-                         │
-        ┌────────────────┼────────────────┐
-        │                │                │
-        ▼                ▼                ▼
-   Data Loading     Processing      Feature Engineering
-                         │
-                         ▼
-                  Model Training
-                         │
-                         ▼
-            Saved Pipeline (.joblib)
-                         │
-         ┌───────────────┴────────────────┐
-         ▼                                ▼
-   Evaluation                    FastAPI Service
-                                          │
-                                          ▼
-                                 REST Predictions
+                 YAML Configuration
+                        │
+                        ▼
+                Training Pipeline
+                        │
+                Saved ML Pipeline
+                   (.joblib)
+                        │
+              FastAPI Prediction API
+                        │
+                 Docker Container
+                        │
+        GitHub ──► GitHub Actions
+                        │
+                        ▼
+              Render Cloud Deployment
+                        │
+                        ▼
+                 Public REST API
 ```
 
 ---
@@ -146,24 +112,36 @@ git clone https://github.com/SalishSeaCast/Modular_ML_Phytoplankton.git
 cd Modular_ML_Phytoplankton
 ```
 
-Install the project
+Install locally
 
 ```bash
 pip install -e .
+```
+
+Or build with Docker
+
+```bash
+docker build -t modular-ml-phytoplankton .
+```
+
+Run the container
+
+```bash
+docker run --rm -p 8000:8000 modular-ml-phytoplankton
 ```
 
 ---
 
 # Running the Analysis
 
-Train a model using a configuration file
+Train a model
 
 ```bash
 python run_analysis.py \
     --config configs/diat_pr.yaml
 ```
 
-To save the deployment model
+Save a deployment-ready model
 
 ```bash
 python run_analysis.py \
@@ -171,12 +149,7 @@ python run_analysis.py \
     --save_model
 ```
 
-The deployment pipeline stores
-
-- trained scikit-learn pipeline (`.joblib`)
-- corresponding configuration file
-
-inside
+The trained model and its configuration are stored in:
 
 ```text
 outputs/model/
@@ -184,101 +157,75 @@ outputs/model/
 
 ---
 
-# Serving the Model
+# Deployment
 
-Start the FastAPI application
+The application is containerized with Docker and automatically deployed to Render.
 
-```bash
-uvicorn src.api.main:app --reload
-```
+The deployment pipeline includes:
 
-Interactive documentation is automatically available at
-
-Swagger UI
-
-```
-http://127.0.0.1:8000/docs
-```
-
-ReDoc
-
-```
-http://127.0.0.1:8000/redoc
-```
-
-The API currently exposes endpoints for
-
-- health check
-- model information
-- prediction
+- Docker image creation
+- Dependency isolation
+- Automated GitHub deployment
+- Public REST API
+- Interactive OpenAPI documentation
 
 ---
 
 # Testing
 
-Run all tests
+Run the full test suite
 
 ```bash
 pytest
 ```
 
-The test suite includes
+Tests cover:
 
-- model persistence tests
-- configuration tests
-- API endpoint tests
-- prediction endpoint validation
+- configuration loading
+- model persistence
+- prediction pipeline
+- API endpoints
 
 ---
 
-# Continuous Integration
+# Continuous Integration & Deployment
 
-GitHub Actions automatically executes the test suite on every push.
+GitHub Actions automatically validates every push by executing the test suite.
 
-The workflow verifies
-
-- package installation
-- model loading
-- API functionality
-- automated tests
-
-ensuring that the repository remains reproducible and functional.
+Successful updates to the `main` branch are automatically deployed to the live Render service.
 
 ---
 
 # Configuration
 
-Experiments are fully controlled through YAML configuration files located in
+Experiments are fully controlled through YAML configuration files located in:
 
 ```text
 configs/
 ```
 
-Typical configuration options include
+Configuration options include:
 
 - dataset location
-- selected environmental drivers
-- spatial variables
-- temporal variables
-- machine learning model
-- training parameters
-- output options
+- selected predictors
+- model parameters
+- training options
+- output configuration
 
-This allows experiments to be modified without changing the source code.
+allowing experiments to be reproduced without modifying source code.
 
 ---
 
 # Future Work
 
-- Docker containerization
-- Cloud deployment
 - Batch prediction endpoint
 - Model versioning
 - Performance monitoring
+- Automated retraining
 - MLOps integration
 
 ---
 
 # License
 
-This project is released under the MIT License.
+Released under the MIT License.
